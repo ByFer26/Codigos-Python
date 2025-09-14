@@ -44,14 +44,22 @@ def obtenerDatos(dispositivo):
             pass
     return datos1,datos2
 
-def crearArreglos(longitud1,longitud2):
-    x1=collections.deque([0]*longitud1, maxlen=longitud1)
-    x2=collections.deque([0]*longitud2, maxlen=longitud2)
-    return x1,x2
+def crearArreglos(longitud1):
+    x1=[]
+    for i in range(0,longitud1):
+        x1.append(0)
+
+    return x1
 
 
 
-def insertarDatos(ar1,ar2,val1,val2):
+def insertarDatos(ar1,val1,longitud):
+    if len(ar1)>=longitud:
+        ar1.pop(0)
     ar1.append(val1)
-    ar2.append(val2)
-    return ar1,ar2
+    return ar1
+
+    
+
+
+

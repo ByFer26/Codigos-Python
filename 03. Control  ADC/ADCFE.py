@@ -10,18 +10,28 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 dato1=0
 dato2=0
 recepcionC=True
+graficaC=True
+x1=[]
+x2=[]
+
 
 pararHilo=threading.Event()
 
 def Iniciar():
     global anim
-    longitud1=muestreo1.get()
-    longitud2=muestreo2.get()
-    eje1.set_xlim(0,muestreo1.get())
-    eje2.set_xlim(0,muestreo2.get())
-    x1,x2=crearArreglos(longitud1,longitud2)
-    hilo.start()
-    anim = animacion.FuncAnimation(figura, graficar,  fargs=(linea1,linea2,longitud1,longitud2,x1,x2),interval = 1, blit = False )
+    global graficaC
+    global x1,x2
+    x1=crearArreglos(muestreo1.get())
+    x2=crearArreglos(muestreo2.get())
+    while graficaC:
+        try:
+            hilo.start()
+            graficaC=False
+        except:
+            pass
+    
+    anim = animacion.FuncAnimation(figura, graficar,  fargs=(linea1,linea2,muestreo1.get(),muestreo2.get(),
+                                                             x1,x2),interval = 1, blit = False )
     grafica.draw()
 
 
@@ -36,11 +46,11 @@ def recepcion():
             recepcionC=False
             
             
-
 hilo=Thread(target=recepcion)
 
 def graficar(self,linea1,linea2,longitud1,longitud2,arr1,arr2):
-    arr1,arr2=insertarDatos(arr1,arr2,dato1,dato2)
+    arr1=insertarDatos(arr1,dato1,longitud1)
+    arr2=insertarDatos(arr2,dato2,longitud2)
     linea1.set_data(range(longitud1), arr1)
     linea2.set_data(range(longitud2), arr2)
 
@@ -57,9 +67,25 @@ def reanudar():
         pass
 
 def Salir():
-    pararHilo.set()
+    recepcionC=False
+    hilo.join()
     ventana.destroy()
     ventana.quit()
+
+def actualizar1(self):
+    parar()
+    eje1.set_xlim(0,muestreo1.get())
+    x1=crearArreglos(muestreo1.get())
+    x1.clear()
+    reanudar()
+
+
+def actualizar2(self):
+    parar()
+    eje2.set_xlim(0,muestreo2.get())
+    x2=crearArreglos(muestreo2.get())
+    x2.clear()
+    reanudar()
 
 figura, (eje1,eje2)=plt.subplots(2,1)
 figura.set_size_inches(8,5)
@@ -100,18 +126,18 @@ opcionesPuertos.place(x=50,y=50,width=150,height=60)
 #Opciones de baudios
 baudios=IntVar(ventana)
 baudios.set("Baudios")
-listaBaudios=[4800,9600,31250,38400,57600,196200]
+listaBaudios=[4800,9600,31250,38400,57600,196200,230400]
 opcionesBaudios=OptionMenu(ventana,baudios,*listaBaudios)
 opcionesBaudios.configure(font=('Qanelas Heavy',16),bg='#53107E',fg='#FFFFFF')
 opcionesBaudios.place(x=50,y=200,width=150,height=60)
 
 #Escala 1
-muestreo1=Scale(ventana,from_=10,to=200,orient='horizontal',length=200,
+muestreo1=Scale(ventana,from_=10,to=200,orient='horizontal',length=200,command=actualizar1,
                 font=('Qanelas Heavy',16),bg='#53107E',fg='#FFFFFF')
 muestreo1.place(x=1100,y=150)
 
 #Escala 2
-muestreo2=Scale(ventana,from_=10,to=200,orient='horizontal',length=200,
+muestreo2=Scale(ventana,from_=10,to=200,orient='horizontal',length=200,command=actualizar2,
                 font=('Qanelas Heavy',16),bg='#53107E',fg='#FFFFFF')
 muestreo2.place(x=1100,y=350)
 
