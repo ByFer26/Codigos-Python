@@ -2,7 +2,6 @@ import psycopg2
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-
 conexion = psycopg2.connect(
     host="localhost",
     user="postgres",
@@ -18,11 +17,18 @@ def crearTabla(nombre, col1, col2):
     cursor.execute(query)
     cursor.close()
 
-def insertarDatos(tabla, col1, col2, objeto, estado):
+def insertarDatos(tabla, col1, col2,  nombre, apellido):
     cursor = conexion.cursor()
-    query = f"INSERT INTO {tabla}({col1},{col2}) VALUES ('{objeto}','{estado}')"
+    query = f"INSERT INTO {tabla}({col1},{col2}) VALUES ('{nombre}','{apellido}')"
     cursor.execute(query)
     cursor.close()
+
+
+def eliminarDatos(tabla):
+    cursor=conexion.cursor()
+    query=f"DELETE FROM {tabla}"
+    cursor.execute(query)
+    cursor.close
 
 def eliminarTabla(tabla):
     cursor=conexion.cursor()
@@ -38,17 +44,10 @@ def extraerDatos(tabla):
     cursor.close
     return datos
 
-def eliminarDatos(tabla):
-    cursor=conexion.cursor()
-    query=f"DELETE FROM {tabla}"
-    cursor.execute(query)
-    cursor.close
-
-
 def generarPDF(tabla,nombre):
     datos=extraerDatos(tabla)
     documento = canvas.Canvas(f"{nombre}.pdf", pagesize=letter)
-    x = 50
+    x = 100
     y = 700
     for fila in datos:
         for valor in fila:

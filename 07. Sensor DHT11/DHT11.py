@@ -194,11 +194,10 @@ def elimDatos():
 
 
 customtkinter.set_appearance_mode("Dark")
-customtkinter.set_default_color_theme("blue") 
-
 ventana=customtkinter.CTk()
 ventana.geometry(f"{1300}x{585}")
 ventana.title("Sensor DHT11")
+ventana.configure(bg="#221616")
 
 barraLateral=customtkinter.CTkFrame(ventana,width=300,height=580)
 barraLateral.grid(row=0, column=0, rowspan=4)
